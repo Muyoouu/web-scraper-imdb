@@ -16,20 +16,14 @@ soup = make_soup(url)
 # Find the films listings
 listings = soup.find("tbody", class_="lister-list")
 # Find the link to each film detailed page, limit to 5 for this project
-films = listings.find_all("a", limit=5)
+films = listings.find_all("a", title=True, limit=5)
 
-"""
-# Loop each section and find selected data
+home_url = "https://www.imdb.com"
+# Loop each film and find selected data
 for film in films:
     # Access each film page
-    film_soup = make_soup(film["href"])
+    film_soup = make_soup(home_url + film["href"])
 
-    title = section.find("a")["title"]
-    location = section.find("span").text
-    price = section.find("strong").text
-    description = section.find("p").text.replace("\r", "")
-
-    # Write into CSV file
-    info = [title, location, price, description]
-
-"""
+    title = film_soup.find("span", class_="sc-afe43def-1").text
+    year = film_soup.find("ul", class_="kdXikI").find("a").text
+    print(title, year)
