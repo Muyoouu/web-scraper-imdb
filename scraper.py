@@ -24,6 +24,16 @@ for film in films:
     # Access each film page
     film_soup = make_soup(home_url + film["href"])
 
+    # Scrape title and year data
     title = film_soup.find("span", class_="sc-afe43def-1").text
     year = film_soup.find("ul", class_="kdXikI").find("a").text
-    print(title, year)
+
+    # Scrape director data
+    staff_section = film_soup.find("div", class_="sc-52d569c6-3")
+    director = staff_section.find("a").text
+
+    # Scrape stars data
+    stars_section = staff_section.find("a", string="Stars").find_next_sibling("div")
+    stars = [star.text for star in stars_section.find_all("a")]
+    print(title, year, director, stars)
+    
