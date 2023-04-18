@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import pandas as pd
 import requests
 
 def make_soup(url):
@@ -16,11 +17,12 @@ soup = make_soup(url)
 # Find the films listings
 listings = soup.find("tbody", class_="lister-list")
 # Find the link to each film detailed page, limit to 5 for this project
-films = listings.find_all("a", title=True, limit=5)
+films_section = listings.find_all("a", title=True, limit=5)
 
 home_url = "https://www.imdb.com"
+film_data = []
 # Loop each film and find selected data
-for film in films:
+for film in films_section:
     # Access each film page
     film_soup = make_soup(home_url + film["href"])
 
@@ -35,5 +37,8 @@ for film in films:
     # Scrape stars data
     stars_section = staff_section.find("a", string="Stars").find_next_sibling("div")
     stars = [star.text for star in stars_section.find_all("a")]
-    print(title, year, director, stars)
-    
+    film_data.append([title, year, director, ", ".join(stars)])
+
+# Output data in form of csv file
+df = pd.DataFrame(film_data, columns=["Title", "Year", "Director", "Stars"])
+df.to_csv("top_film.csv")
